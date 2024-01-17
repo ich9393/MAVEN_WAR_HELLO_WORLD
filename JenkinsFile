@@ -30,7 +30,7 @@ pipeline {
                         bat "docker login --username ich9393 --password pw1234567"
                     //}
                     // Push the image
-                    bat 'docker push claudiufinalproject'
+                    bat 'docker push ich9393/claudiufinalproject'
                 }
             }
         }
