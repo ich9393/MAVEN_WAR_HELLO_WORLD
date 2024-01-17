@@ -1,20 +1,19 @@
 pipeline {
     agent none // No default agent
     tools {
-      maven 'MVN_HOME'
+        maven 'MVN_HOME'
     }
 
     stages {
         stage('Maven Build') {
-            agent any // Run on the Jenkins master (your Windows PC)
+            agent any
             steps {
-                // Trigger a Maven build on Windows
                 bat 'mvn clean package'
-                }
             }
         }
 
         stage('Build Docker Image') {
+            agent any
             steps {
                 script {
                     bat 'docker build -t claudiufinalproject .'
