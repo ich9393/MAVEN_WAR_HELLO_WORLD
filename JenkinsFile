@@ -1,4 +1,18 @@
-pipeline{
+pipeline {
+    agent none // No default agent
+
+    stages {
+        stage('Maven Build') {
+            agent any // Run on the Jenkins master (your Windows PC)
+            steps {
+                // Trigger a Maven build on Windows
+                bat 'mvn clean package'
+            }
+        }
+
+
+
+/*pipeline{
     agent any
     tools {
       maven 'MVN_HOME'
@@ -36,4 +50,4 @@ pipeline{
         }        
     }
     
-}
+}*/
