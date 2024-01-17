@@ -20,5 +20,19 @@ pipeline {
                 }
             }
         }
+
+        stage('Push to DockerHub') {
+            agent any
+            steps {
+                script {
+                    // Log in to Docker Hub
+                    withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat "echo %DOCKER_PASSWORD% | docker login --username %DOCKER_USERNAME% --password-stdin"
+                    }
+                    // Push the image
+                    bat 'docker push claudiufinalproject'
+                }
+            }
+        }
     }
 }
