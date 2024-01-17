@@ -1,5 +1,8 @@
 pipeline {
     agent none // No default agent
+    tools {
+      maven 'MVN_HOME'
+    }
 
     stages {
         stage('Maven Build') {
