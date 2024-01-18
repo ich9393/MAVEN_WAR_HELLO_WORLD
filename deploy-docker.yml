@@ -2,6 +2,8 @@
 - name: Install and Deploy Docker Container on CentOS 7
   hosts: linuxclient1
   become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3  # Specify Python 3 interpreter
 
   tasks:
     # Update all packages to their latest version
@@ -31,10 +33,12 @@
         state: latest
         executable: pip3
 
-    # Install Docker Python library
-    - name: Install Docker Python library
+    # Install Docker Python library and dependencies
+    - name: Install Docker Python library and dependencies
       pip:
-        name: docker
+        name:
+          - docker
+          - requests
         executable: pip3
 
     # Docker Installation
