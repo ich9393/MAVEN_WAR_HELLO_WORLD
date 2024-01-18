@@ -2,8 +2,6 @@
 - name: Install and Deploy Docker Container on CentOS 7
   hosts: linuxclient1
   become: true
-  vars:
-    ansible_python_interpreter: /usr/bin/python3  # Specify Python 3 interpreter
 
   tasks:
     # Update all packages to their latest version
@@ -18,7 +16,7 @@
         name: epel-release
         state: present
 
-    # Install Python 3 and Pip
+    # Install Python 3 and Pip (using Python 2)
     - name: Install Python 3 and Pip
       yum:
         name:
@@ -26,22 +24,17 @@
           - python3-pip
         state: present
 
-    # Upgrade Pip to the latest version
-    - name: Upgrade pip
-      pip:
-        name: pip
-        state: latest
-        executable: pip3
-
-    # Install Docker Python library and dependencies
-    - name: Install Docker Python library and dependencies
+    # Install Docker Python library (using Python 3)
+    - name: Install Docker Python library
       pip:
         name:
           - docker
           - requests
         executable: pip3
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
-    # Docker Installation
+    # Docker Installation (using Python 2)
     - name: Install yum-utils
       yum:
         name: yum-utils
@@ -66,16 +59,20 @@
         state: started
         enabled: yes
 
-    # Docker Deployment
+    # Docker Deployment (using Python 3)
     - name: Log into Docker Hub
       docker_login:
         username: ich9393
         password: pw1234567
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
     - name: Pull Docker image for Spring Boot app
       docker_image:
         name: ich9393/claudiufinalproject:latest
         source: pull
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
 
     - name: Run Docker container for Spring Boot app
       docker_container:
@@ -85,3 +82,5 @@
         restart_policy: always
         ports:
           - "8080:8080"
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
