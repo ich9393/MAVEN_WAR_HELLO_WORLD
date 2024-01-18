@@ -1,18 +1,83 @@
 ---
-- hosts: linuxclient1
-  become: True
-  become_user: root
+- name: Install and Deploy Docker Container on CentOS 7
+  hosts: linuxclient1
+  become: true
+
   tasks:
-    - name: Install yum-utils (use the yum module)
+    # Update all packages to their latest version
+    - name: Update all packages
+      yum:
+        name: '*'
+        state: latest
 
-    - name: Download Docker repository file using the get_url
+    # Enable EPEL Repository for additional packages
+    - name: Install EPEL repository
+      yum:
+        name: epel-release
+        state: present
 
-    - name: Install Docker packages (engine) using yum module, reference https://docs.docker.com/engine/install/centos/#installation-methods
+    # Install Python 3 and Pip
+    - name: Install Python 3 and Pip
+      yum:
+        name:
+          - python3
+          - python3-pip
+        state: present
 
-    - name: Start Docker service using the systemd module
-        
-    - name: log into docker hub registry using the docker_login module
+    # Upgrade Pip to the latest version
+    - name: Upgrade pip
+      pip:
+        name: pip
+        state: latest
+        executable: pip3
 
-    - name: Pull image and create the container using docker_container
-    
-    - name: Start the container using docker_container
+    # Install Docker Python library
+    - name: Install Docker Python library
+      pip:
+        name: docker
+        executable: pip3
+
+    # Docker Installation
+    - name: Install yum-utils
+      yum:
+        name: yum-utils
+        state: present
+
+    - name: Add Docker repository
+      shell: sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+    - name: Install Docker packages
+      yum:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        state: present
+
+    - name: Start and enable Docker service
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    # Docker Deployment
+    - name: Log into Docker Hub
+      docker_login:
+        username: ich9393
+        password: pw1234567
+
+    - name: Pull Docker image for Spring Boot app
+      docker_image:
+        name: ich9393/claudiufinalproject:latest
+        source: pull
+
+    - name: Run Docker container for Spring Boot app
+      docker_container:
+        name: spring-boot-app
+        image: ich9393/claudiufinalproject:latest
+        state: started
+        restart_policy: always
+        ports:
+          - "8080:8080"
