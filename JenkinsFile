@@ -17,8 +17,8 @@ pipeline {
             steps {
                 script {
                     bat 'docker build -t claudiufinalproject .'
+                    // Tag the image with your Docker Hub username
                     bat 'docker tag claudiufinalproject ich9393/claudiufinalproject'
-
                 }
             }
         }
@@ -27,14 +27,22 @@ pipeline {
             agent any
             steps {
                 script {
-                    // Log in to Docker Hub
-                    //withCredentials([usernamePassword(credentialsId: 'docker_credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        bat "docker login --username ich9393 --password pw1234567"
-                    //}
-                    // Push the image
+                    // Push the image to Docker Hub
+                    // Make sure to use the tagged image name
                     bat 'docker push ich9393/claudiufinalproject'
+                }
+            }
+        }
+
+        stage('Docker Deploy') {
+            agent { label 'AnsibleCN' }
+            steps {
+                script {
+                    // Run the Ansible playbook
+                    ansiblePlaybook credentialsId: '78106c2c-41ab-480a-a5e0-f13d2351632e', playbook: 'deploy-docker.yml'
                 }
             }
         }
     }
 }
+
